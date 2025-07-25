@@ -12,6 +12,20 @@ function BasicInfoForm({ formData, setFormData }) {
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Enter product title"
+                />
+            </Form.Group>
+
+            <Form.Group className="mt-3">
+                <Form.Label>Upload Product Image</Form.Label>
+                <Form.Control
+                    type="file"
+                    onChange={(e) =>
+                        setFormData({
+                            ...formData,
+                            media: e.target.files[0]
+                        })
+                    }
                 />
             </Form.Group>
 
@@ -29,4 +43,5 @@ function BasicInfoForm({ formData, setFormData }) {
         </>
     );
 }
+
 export default BasicInfoForm;

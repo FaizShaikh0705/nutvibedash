@@ -1,51 +1,76 @@
 import React from 'react';
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form, Row, Col, Button } from 'react-bootstrap';
 
-const CustomMetafieldsForm = ({ formData, setFormData }) => {
-    const handleChange = (e) => {
+function CustomMetafieldsForm({ formData, setFormData }) {
+    const metafields = formData.categoryInfo?.customMetafields || {};
+
+    const handleChange = (key, value) => {
         setFormData({
             ...formData,
             categoryInfo: {
                 ...formData.categoryInfo,
                 customMetafields: {
-                    ...formData.categoryInfo.customMetafields,
-                    [e.target.name]: e.target.value
+                    ...metafields,
+                    [key]: value
                 }
             }
         });
     };
 
+    const addMetafield = () => {
+        const newKey = `key${Object.keys(metafields).length + 1}`;
+        setFormData({
+            ...formData,
+            categoryInfo: {
+                ...formData.categoryInfo,
+                customMetafields: {
+                    ...metafields,
+                    [newKey]: ''
+                }
+            }
+        });
+    };
+
+    const removeMetafield = (keyToRemove) => {
+        const updated = { ...metafields };
+        delete updated[keyToRemove];
+
+        setFormData({
+            ...formData,
+            categoryInfo: {
+                ...formData.categoryInfo,
+                customMetafields: updated
+            }
+        });
+    };
+
     return (
-        <div className="mt-3">
+        <div className="mt-4">
             <h5>Custom Metafields</h5>
-            <Row>
-                <Col>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Origin</Form.Label>
+            {Object.entries(metafields).map(([key, value], index) => (
+                <Row key={index} className="mb-2">
+                    <Col>
                         <Form.Control
-                            type="text"
-                            name="origin"
-                            value={formData.categoryInfo.customMetafields.origin || ''}
-                            onChange={handleChange}
-                            placeholder="e.g. Afghanistan"
+                            placeholder="Key"
+                            value={key}
+                            disabled
                         />
-                    </Form.Group>
-                </Col>
-                <Col>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Grade</Form.Label>
+                    </Col>
+                    <Col>
                         <Form.Control
-                            type="text"
-                            name="grade"
-                            value={formData.categoryInfo.customMetafields.grade || ''}
-                            onChange={handleChange}
-                            placeholder="e.g. A++"
+                            placeholder="Value"
+                            value={value}
+                            onChange={(e) => handleChange(key, e.target.value)}
                         />
-                    </Form.Group>
-                </Col>
-            </Row>
+                    </Col>
+                    <Col xs="auto">
+                        <Button variant="danger" onClick={() => removeMetafield(key)}>Remove</Button>
+                    </Col>
+                </Row>
+            ))}
+            <Button variant="outline-secondary" onClick={addMetafield}>+ Add Metafield</Button>
         </div>
     );
-};
+}
 
 export default CustomMetafieldsForm;
